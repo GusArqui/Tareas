@@ -1,0 +1,42 @@
+.data
+
+.text
+
+main:
+	li, $a0, 8 #Calcuar el octavo numero de Fibonacci
+	add $a1, $a1, $zero #inicializamos la variable donde guardamos el rsultado final
+	
+	jal fibo #Lllamamos a la funcion 
+	j Exit
+	
+fibo:
+	addi $sp, $sp, -8 #Reservamos memoria (2) para el stack
+	sw $ra, 0($sp)#guardamos en stack la direccion de memoria de ra, que es a donde regresamos (return adress) de la ultima vez que fue llamada la funcion
+	sw $a0, 4($sp)#guardamos en el satck la direccion de memoria de a0, que es donde guaramos el contenido
+	
+	beq $a0, 1, return1 #comparo para ver si a0(n) es 1, si es asi saltamos a return1
+	beq $a0, 0, return1 #comparo para ver si a0(n) es 0, si es asi saltamos a return1
+	#son caso base, que significa que llegamos al tipode de las restas
+	
+	sub $a0, $a0,1 #a a0 le resta 1 entero para obtener (n-1)
+	jal fibo #llamado a la recursividad
+	addi $a0, $a0, 1 #Sumamos una unidad, por si las dudas
+	sub $a0, $a0, 2 #restamos dos unidades para obtener (n-2)
+	jal fibo#llamado a la recursividad
+	
+	j exitFibo
+return1:
+	add $a1, $a1, $a0 #sumamos en a1 los valores almacenados de a1, con los datos que se actualizan de a0
+	j exitFibo #brincamos a exitFibo
+	
+exitFibo:
+	lw $ra, 0($sp)#extraemos del stack, la dirección de ra
+	lw $a0, 4($sp)#extraemos del stack el contenido de a0
+	addi $sp, $sp, 8#restauramos valores del satck
+	jr $ra#brincamos a la ultima vez en la que la funcion fue llamada
+
+
+
+
+
+Exit:
